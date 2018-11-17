@@ -27,6 +27,28 @@ router.get('/instructors',function(req,res){
         }
     });
 });
+
+router.get('/',function(req,res){
+    if(req.headers.authorization)
+    {
+        user.query("SELECT * from user WHERE token=('"+req.headers.authorization+"')",function(err,rows,fields){
+            if(err){
+                 res.send({errorCode:1,message:"Database Error!",status:"error"});
+            }
+            if(rows.length==0){
+                res.send({errorCode:1,message:"No data show!",status:"nodata"});
+            }
+            else{
+                 res.send( {errorCode:0,message:"successfully",status:"successfully",data:rows});
+                
+            }
+        });
+    }
+    else
+    {
+        res.send({errorCode:2,message:"Missing fields",status:"fail"});
+    }
+});
 //get department on Admin page
 router.get('/department',function(req,res){
     user.query('SELECT * from department',function(err,rows,fields){

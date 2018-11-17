@@ -47,7 +47,7 @@ router.get('/student',function(req,res){
     }
 });
   router.post('/',function(req,res){
-      if(req.body.password&&req.body.role&&req.body.active&&req.body.deptid&&req.body.dcid&&req.body.total)
+      if(req.body.password&&req.body.role&&req.body.active&&req.body.deptid&&req.body.dcid&&req.body.total&&req.body.username)
       {
         deptCourse.find('first',{where: "dcid="+req.body.dcid},function(err,rows,fields){
             if(err){
@@ -67,8 +67,9 @@ router.get('/student',function(req,res){
             {
             var i = 0;
             do {
-                i++;
-                student.query("INSERT INTO user(username, password, role,active)VALUES(CONCAT('"+rows.dcname+"',FLOOR((RAND() * 100000))), "+req.body.password+","+req.body.role+","+req.body.active+")", function(err, result) {
+                i++;          
+                req.body.username++;
+                student.query("INSERT INTO user(username, password, role,active)VALUES(CONCAT('"+rows.dcname+"',"+req.body.username+"), "+req.body.password+","+req.body.role+","+req.body.active+")", function(err, result) {
                     if(err) 
                     {
                         res.send({errorCode:1,message:"Database Error!",status:"error"});
