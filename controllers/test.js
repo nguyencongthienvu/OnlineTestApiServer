@@ -160,13 +160,13 @@ router.post('/takeexam',function(req,res){
         }  
 }); 
 router.post('/result',function(req,res){
-    if(req.body.stdid&&req.body.cid&&req.body.uid&&req.body.testid)
+    if(req.body.stdid&&req.body.cid&&req.body.uid&&req.body.testid&&req.body.marks&&req.body.testdate)
     {
-        var d =new Date();
-        test.query("Insert into report(stdid,cid,uid,testid,marks,maxmarks,testdate) VALUES("+req.body.stdid+","+req.body.cid+","+req.body.uid+","+req.body.testid+","+req.body.marks+",10,'"+d+"')", function(err, result) {
+        var date = new Date();
+        var fullDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+        test.query("Insert into report(stdid,cid,uid,testid,marks,maxmarks,testdate) VALUES("+req.body.stdid+","+req.body.cid+","+req.body.uid+","+req.body.testid+","+req.body.marks+",10,'"+fullDate+"')", function(err, result) {
             if(err) 
             {
-                console.log(err)
                 res.send({errorCode:1,message:"Database Error!",status:"error"});
             }
             else
