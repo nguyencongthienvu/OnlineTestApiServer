@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3306
--- Thời gian đã tạo: Th7 22, 2018 lúc 01:56 PM
+-- Thời gian đã tạo: Th10 18, 2018 lúc 03:35 PM
 -- Phiên bản máy phục vụ: 5.7.19
 -- Phiên bản PHP: 5.6.31
 
@@ -42,16 +42,14 @@ CREATE TABLE IF NOT EXISTS `course` (
   PRIMARY KEY (`cid`),
   UNIQUE KEY `ccode` (`ccode`),
   KEY `CourseForeignKey` (`deptid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `course`
 --
 
 INSERT INTO `course` (`cid`, `ccode`, `mcode`, `mname`, `cname`, `ects`, `year`, `sem`, `deptid`) VALUES
-(1, 'LTCB311', '17011043', 'Lap Trinh', 'Lap Trinh Can Bản', 3, 'II', '2', 1),
-(2, 'TD121', '2562255', 'Trac Dia', 'Trac Dia 1', NULL, NULL, NULL, 11),
-(4, 'LTNC311', '17011043	', 'Lap Trinh', 'Lap Trinh Nang Cao', 0, '1', '1', 1);
+(1, 'LTCB311', '17011043', 'a', 'Lap trinh can ban', 3, '', '2', 1);
 
 -- --------------------------------------------------------
 
@@ -66,17 +64,38 @@ CREATE TABLE IF NOT EXISTS `department` (
   `dept_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_mysql500_ci NOT NULL,
   PRIMARY KEY (`deptid`),
   UNIQUE KEY `dept` (`dept`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `department`
 --
 
 INSERT INTO `department` (`deptid`, `dept`, `dept_name`) VALUES
-(1, 'IT', 'Information Technology'),
-(11, 'TĐ', 'Trắc Địa'),
-(14, 'CTN', 'Cấp Thoát Nước'),
-(22, 'MT', 'Môi Trường');
+(1, 'CNTT', 'Công Nghệ Thông Tin'),
+(2, 'CTN', 'Cấp Thoát Nước');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `departmentcourse`
+--
+
+DROP TABLE IF EXISTS `departmentcourse`;
+CREATE TABLE IF NOT EXISTS `departmentcourse` (
+  `dcid` int(11) NOT NULL AUTO_INCREMENT,
+  `dcname` varchar(255) NOT NULL,
+  `dcdetail` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`dcid`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `departmentcourse`
+--
+
+INSERT INTO `departmentcourse` (`dcid`, `dcname`, `dcdetail`) VALUES
+(1, '01', '2014-2018'),
+(2, '02', ''),
+(3, '03', NULL);
 
 -- --------------------------------------------------------
 
@@ -96,16 +115,14 @@ CREATE TABLE IF NOT EXISTS `instructor` (
   PRIMARY KEY (`insid`),
   UNIQUE KEY `uid` (`uid`),
   KEY `InstructorDepartment` (`deptid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `instructor`
 --
 
 INSERT INTO `instructor` (`insid`, `uid`, `fullname`, `sex`, `image`, `email`, `deptid`) VALUES
-(3, 52, 'Hoàng Thị Kiều Anh', 'Nữ', NULL, 'kieuanh@gmail.com', 11),
-(5, 56, NULL, NULL, NULL, NULL, 1),
-(8, 58, 'Từ Thanh Trí', '', NULL, '', 1);
+(1, 4, 'Từ Thanh Trí', '', NULL, 'tuthanhtri@gmail.com', 1);
 
 -- --------------------------------------------------------
 
@@ -127,22 +144,28 @@ CREATE TABLE IF NOT EXISTS `question` (
   `mark` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`qnid`,`testid`),
   KEY `tpid` (`testid`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `question`
 --
 
 INSERT INTO `question` (`testid`, `qnid`, `question`, `optiona`, `optionb`, `optionc`, `optiond`, `correctanswer`, `level`, `mark`) VALUES
-(48, 39, '1+1=?', '4', '2', '4', '3', 'optiona', '0', '3.00'),
-(50, 50, '1+1=?', '4', '2', '4', '3', 'optiona', '0', '5.00'),
-(48, 56, 'hgggg', '', '', '', '', NULL, NULL, '4.00'),
-(48, 57, 'abc', 'a', 'b', 'c', 'd', 'optionb', '1', '3.00'),
-(50, 58, '1+2=?', '4', '3', '2', '5', 'optionb', '0', '2.50'),
-(50, 59, '1+1=?', '4', '2', '4', '3', 'optiona', '0', '2.50'),
-(49, 62, 'abc', 'a', 'b', 'c', 'd', 'optionb', '1', '3.00'),
-(49, 63, '1+2=?', '4', '3', '2', '5', 'optionb', '0', '2.50'),
-(49, 64, '1+1=?', '4', '2', '4', '3', 'optiona', '0', '2.50');
+(1, 23, 'Có thể Copy toàn bộ cài đặt Windows XP Vào ổ đĩa Flash USB có dung lượng 256MB được không:', 'Hoàn toàn được', 'Không thể được vì bộ cài đặt WindowsXP lớn hơn 256 Mb', 'Câu A đúng', 'Không có câu trả lời nào đúng', 'optionb', '0', '2.00'),
+(1, 24, 'Bấm phím nào trong các phím sau dùng để nới rộng một cấp Folder trên cửa sổ TreeView của Windows Explorer:', 'Mũi tên lên', 'Mũi tên xuống', 'Mũi tên qua trái', 'Mũi tên qua phải', 'optionc', '0', '2.00'),
+(1, 25, 'Chọn câu phát biểu không chính  xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionc', '0', '2.00'),
+(1, 26, 'Chọn cách nào trong các cách sau để chuyển qua lại giữa các ứng dụng đang được kích hoạt trên Windows:', 'Dùng chuột kích chọn vào tên ứng dụng ở trên TaskBar', 'Dùng tổ hợp phím Alt + Tab để chọn ứng dụng cần làm việc', 'Cả A và B đều không được', 'Cả A và B đều được', 'optiond', '0', '2.00'),
+(1, 27, 'Ấn chuột phải vào một thư mục, chọn Properties. Thao tác này có  thể:', 'Xem các thông tin chi tiết của thư mục', 'Đổi tên thư mục', 'Thiết đặt các thuộc tính (chỉ đọc, ẩn…) cho thư mục', 'Cả A và C đều đúng', 'optiond', '0', '2.00'),
+(2, 28, 'Ấn chuột phải vào một thư mục, chọn Properties. Thao tác này có  thể:', 'Xem các thông tin chi tiết của thư mục', 'Đổi tên thư mục', 'Thiết đặt các thuộc tính (chỉ đọc, ẩn…) cho thư mục', 'Cả A và C đều đúng', 'optiond', '0', '1.50'),
+(2, 29, 'Chọn cách nào trong các cách sau để chuyển qua lại giữa các ứng dụng đang được kích hoạt trên Windows:', 'Dùng chuột kích chọn vào tên ứng dụng ở trên TaskBar', 'Dùng tổ hợp phím Alt + Tab để chọn ứng dụng cần làm việc', 'Cả A và B đều không được', 'Cả A và B đều được', 'optiond', '0', '1.50'),
+(2, 30, 'Chọn câu phát biểu không chính  xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionc', '0', '1.50'),
+(2, 31, 'Bấm phím nào trong các phím sau dùng để nới rộng một cấp Folder trên cửa sổ TreeView của Windows Explorer:', 'Mũi tên lên', 'Mũi tên xuống', 'Mũi tên qua trái', 'Mũi tên qua phải', 'optionc', '0', '1.50'),
+(2, 32, 'Có thể Copy toàn bộ cài đặt Windows XP Vào ổ đĩa Flash USB có dung lượng 256MB được không:', 'Hoàn toàn được', 'Không thể được vì bộ cài đặt WindowsXP lớn hơn 256 Mb', 'Câu A đúng', 'Không có câu trả lời nào đúng', 'optionb', '0', '1.50'),
+(2, 36, 'Chọn câu phát biểu không chính xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionb', '1', '2.50'),
+(3, 89, 'Bấm phím nào trong các phím sau dùng để nới rộng một cấp Folder trên cửa sổ TreeView của Windows Explorer:', 'Mũi tên lên', 'Mũi tên xuống', 'Mũi tên qua trái', 'Mũi tên qua phải', 'optionc', '0', '3.00'),
+(3, 90, 'Chọn câu phát biểu không chính  xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionc', '0', '3.00'),
+(3, 91, 'Chọn cách nào trong các cách sau để chuyển qua lại giữa các ứng dụng đang được kích hoạt trên Windows:', 'Dùng chuột kích chọn vào tên ứng dụng ở trên TaskBar', 'Dùng tổ hợp phím Alt + Tab để chọn ứng dụng cần làm việc', 'Cả A và B đều không được', 'Cả A và B đều được', 'optiond', '0', '3.00'),
+(3, 92, 'Chọn câu phát biểu không chính xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionb', '1', '1.00');
 
 -- --------------------------------------------------------
 
@@ -163,17 +186,19 @@ CREATE TABLE IF NOT EXISTS `questionbank` (
   `level` char(3) DEFAULT NULL COMMENT '0:Easy,1:Medium,2:Hard',
   PRIMARY KEY (`qnbid`,`tpid`),
   KEY `tpid` (`tpid`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `questionbank`
 --
 
 INSERT INTO `questionbank` (`tpid`, `qnbid`, `question`, `optiona`, `optionb`, `optionc`, `optiond`, `correctanswer`, `level`) VALUES
-(1, 4, '1+1=?', '4', '2', '4', '3', 'optiona', '0'),
-(2, 8, 'hgggg', '', '', '', '', NULL, NULL),
-(3, 9, 'abc', 'a', 'b', 'c', 'd', 'optionb', '1'),
-(1, 10, '1+2=?', '4', '3', '2', '5', 'optionb', '0');
+(1, 1, 'Chọn câu phát biểu không chính  xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionc', '0'),
+(1, 2, 'Ấn chuột phải vào một thư mục, chọn Properties. Thao tác này có  thể:', 'Xem các thông tin chi tiết của thư mục', 'Đổi tên thư mục', 'Thiết đặt các thuộc tính (chỉ đọc, ẩn…) cho thư mục', 'Cả A và C đều đúng', 'optiond', '0'),
+(1, 3, 'Bấm phím nào trong các phím sau dùng để nới rộng một cấp Folder trên cửa sổ TreeView của Windows Explorer:', 'Mũi tên lên', 'Mũi tên xuống', 'Mũi tên qua trái', 'Mũi tên qua phải', 'optionc', '0'),
+(1, 4, 'Chọn cách nào trong các cách sau để chuyển qua lại giữa các ứng dụng đang được kích hoạt trên Windows:', 'Dùng chuột kích chọn vào tên ứng dụng ở trên TaskBar', 'Dùng tổ hợp phím Alt + Tab để chọn ứng dụng cần làm việc', 'Cả A và B đều không được', 'Cả A và B đều được', 'optiond', '0'),
+(1, 5, 'Có thể Copy toàn bộ cài đặt Windows XP Vào ổ đĩa Flash USB có dung lượng 256MB được không:', 'Hoàn toàn được', 'Không thể được vì bộ cài đặt WindowsXP lớn hơn 256 Mb', 'Câu A đúng', 'Không có câu trả lời nào đúng', 'optionb', '0'),
+(2, 6, 'Chọn câu phát biểu không chính xác:', 'Chọn nhiều Folder, File liên tục: Kích chuột tại tên Folder/ File đầu tiên, rồi nhấn giữ phím Shift và kích chuột tại tên Folder/ File cuối', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Shift trong khi kích chuột tại tên các Folder File', 'Chọn nhiều Folder, File không liên tục:nhấn giữ phím Ctrl trong khi kích chuột tại tên các Folder File', 'Chọn một Folder/ File: kích chuột tại tên Folder/ File', 'optionb', '1');
 
 -- --------------------------------------------------------
 
@@ -189,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `report` (
   `testid` int(11) NOT NULL,
   `marks` decimal(10,2) NOT NULL,
   `maxmarks` decimal(10,2) NOT NULL,
-  `testdate` date DEFAULT NULL,
+  `testdate` datetime DEFAULT NULL,
   KEY `stdid` (`stdid`),
   KEY `cid` (`cid`),
   KEY `uid` (`uid`),
@@ -201,11 +226,16 @@ CREATE TABLE IF NOT EXISTS `report` (
 --
 
 INSERT INTO `report` (`stdid`, `cid`, `uid`, `testid`, `marks`, `maxmarks`, `testdate`) VALUES
-(40, 1, 50, 48, '8.00', '10.00', NULL),
-(42, 2, 53, 49, '9.00', '10.00', NULL),
-(44, 1, 59, 48, '7.00', '10.00', NULL),
-(45, 1, 60, 48, '8.00', '10.00', NULL),
-(40, 1, 50, 48, '9.00', '10.00', '2018-07-27');
+(1, 1, 2, 1, '6.00', '10.00', '0000-00-00 00:00:00'),
+(1, 1, 2, 1, '2.00', '10.00', '0000-00-00 00:00:00'),
+(1, 1, 2, 1, '4.00', '10.00', '2018-11-23 00:00:00'),
+(1, 1, 2, 1, '4.00', '10.00', '2018-11-23 00:00:00'),
+(1, 1, 2, 1, '7.00', '10.00', '2018-11-16 06:27:46'),
+(1, 1, 2, 1, '7.00', '10.00', '2018-11-16 06:27:46'),
+(1, 1, 2, 1, '10.00', '10.00', '0000-00-00 00:00:00'),
+(1, 1, 2, 1, '2.00', '10.00', '0000-00-00 00:00:00'),
+(1, 1, 2, 1, '2.00', '10.00', '2018-11-18 21:45:54'),
+(1, 1, 2, 1, '10.00', '10.00', '2018-11-18 21:54:29');
 
 -- --------------------------------------------------------
 
@@ -222,21 +252,22 @@ CREATE TABLE IF NOT EXISTS `student` (
   `image` varchar(500) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `deptid` int(11) NOT NULL,
+  `dcid` int(11) NOT NULL,
   PRIMARY KEY (`stdid`),
   UNIQUE KEY `uid` (`uid`),
-  KEY `StudentDepartment` (`deptid`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+  KEY `StudentDepartment` (`deptid`),
+  KEY `StudentDepartmentCourse` (`dcid`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `student`
 --
 
-INSERT INTO `student` (`stdid`, `uid`, `fullname`, `sex`, `image`, `email`, `deptid`) VALUES
-(40, 50, 'Nguyen Cong Thien Vu', NULL, NULL, NULL, 1),
-(42, 53, NULL, NULL, NULL, NULL, 11),
-(43, 55, NULL, NULL, NULL, NULL, 14),
-(44, 59, NULL, NULL, NULL, NULL, 1),
-(45, 60, NULL, NULL, NULL, NULL, 1);
+INSERT INTO `student` (`stdid`, `uid`, `fullname`, `sex`, `image`, `email`, `deptid`, `dcid`) VALUES
+(1, 2, 'Thien Vu Nguyen', NULL, NULL, NULL, 1, 1),
+(2, 3, NULL, NULL, NULL, NULL, 2, 2),
+(39, 33, NULL, NULL, NULL, NULL, 1, 2),
+(40, 34, NULL, NULL, NULL, NULL, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -295,16 +326,16 @@ CREATE TABLE IF NOT EXISTS `test` (
   `code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`testid`),
   KEY `TestCourse` (`cid`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `test`
 --
 
 INSERT INTO `test` (`testid`, `testname`, `testdescription`, `testdate`, `testime`, `cid`, `testfrom`, `testto`, `duration`, `totalquestions`, `code`) VALUES
-(48, '01', '', '2018-07-27', NULL, 1, '2018-07-23T16:03', '2018-07-23T17:03', 0, 3, '123'),
-(49, '01', NULL, NULL, NULL, 2, '2018-07-23T16:03', '2018-07-23T16:03', NULL, 3, NULL),
-(50, '02', '', NULL, NULL, 1, '2018-07-23T16:03', '2018-07-23T16:03', 0, 3, '123');
+(1, '001', '', NULL, NULL, 1, '2018-11-18T21:33', '2018-11-18T23:27', 45, 5, '123'),
+(2, '002', '', NULL, NULL, 1, '', '', 45, 4, ''),
+(3, '003', '', NULL, NULL, 1, '', '', 45, 4, '');
 
 -- --------------------------------------------------------
 
@@ -320,18 +351,16 @@ CREATE TABLE IF NOT EXISTS `topic` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`tpid`,`cid`),
   KEY `cid` (`cid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `topic`
 --
 
 INSERT INTO `topic` (`cid`, `tpid`, `topicname`, `description`) VALUES
-(1, 1, 'Lập trình cơ bản.', 'abc'),
-(1, 2, 'Mảng lập trình', NULL),
-(1, 3, 'sad', 'jjjj'),
-(4, 5, 'ghjghjghj', ''),
-(4, 7, 'ddd', '');
+(1, 1, 'Ly Thuyet', ''),
+(1, 2, 'Thuc Hanh', ''),
+(1, 3, 'Nang Cao', '');
 
 -- --------------------------------------------------------
 
@@ -350,22 +379,19 @@ CREATE TABLE IF NOT EXISTS `user` (
   `active` char(3) NOT NULL COMMENT '0: active,1: no active',
   PRIMARY KEY (`uid`),
   UNIQUE KEY `Số báo danh` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `user`
 --
 
 INSERT INTO `user` (`uid`, `username`, `password`, `token`, `expired_token`, `role`, `active`) VALUES
-(1, 'Admin', '123', '1ufgecw7q0jjwlvye5', '2018-07-22 16:25:47', '0', '0'),
-(50, '0350080063', '123', '1ufgecw7q0jjwlwgl9', '2018-07-22 21:09:14', '2', '0'),
-(52, 'kieuanhcute', '123', '1ufgecw73ojjl069vg', '2018-07-14 13:31:04', '1', '0'),
-(53, '0350080142', '123', '1ufgecw888jjwq2yyr', '2018-07-22 19:01:48', '2', '0'),
-(55, '0350080042', '123', NULL, NULL, '2', '0'),
-(56, 'anhto', '456', '1ufgecw5wgjjkx0hbp', '2018-07-14 12:02:35', '1', '0'),
-(58, 'tuthanhtri', '123', '1ufgecw2cgjjw8pahh', '2018-07-22 21:15:16', '1', '0'),
-(59, '0350080062', '123', NULL, NULL, '2', '0'),
-(60, '0350080061', '123', NULL, NULL, '2', '0');
+(1, 'Admin', '123', '1ufgecw5kgjompbmeo', '2018-11-18 17:21:22', '0', '0'),
+(2, '0350080063', '123', '1ufgecw23sjomyxyry', '2018-11-18 22:30:41', '2', '0'),
+(3, '0350080021', '123', NULL, NULL, '2', '0'),
+(4, 'tuthanhtri', '123', '1ufgecw23sjomz966a', '2018-11-18 21:59:24', '1', '0'),
+(33, '0250080061', '123', NULL, NULL, '2', '0'),
+(34, '0250080062', '123', NULL, NULL, '2', '0');
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -410,7 +436,8 @@ ALTER TABLE `report`
 --
 ALTER TABLE `student`
   ADD CONSTRAINT `ForeignKeyStudent` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `StudentDepartment` FOREIGN KEY (`deptid`) REFERENCES `department` (`deptid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `StudentDepartment` FOREIGN KEY (`deptid`) REFERENCES `department` (`deptid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `StudentDepartmentCourse` FOREIGN KEY (`dcid`) REFERENCES `departmentcourse` (`dcid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `studentquestionreport`
