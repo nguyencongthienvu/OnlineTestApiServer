@@ -114,4 +114,21 @@ router.delete('/:rowId(\\d+)',function(req,res){
     }
     
 })
+
+router.post('/takeInfo',function(req,res){
+    if(req.body.token&&req.body.testid)
+    {
+        question.query("Select user.username, test.testto from user, test where token =('"+req.body.token+"') and testid =('"+req.body.testid+"')",function(err,rows,fields){
+         if(err){
+             res.send({errorCode:1,message:"Database Error!",status:"error"});
+         }
+         if(rows.length==0){
+             res.send({errorCode:1,message:"No data show!",status:"nodata",data:rows});
+         }
+         else{
+             res.send(result.data(rows));
+         }
+     });
+    }  
+}); 
 module.exports = router
