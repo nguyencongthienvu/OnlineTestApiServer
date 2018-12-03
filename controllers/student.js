@@ -105,6 +105,25 @@ else
 }
 });           
      
-       
+//Edit profile
+router.put('/',function(req,res){
+    if(req.body.token&&req.body.Profile.password)
+    {
+        student.query("UPDATE student,user SET student.fullname='"+req.body.Profile.fullname+"',student.sex='"+req.body.Profile.sex+"',student.email='"+req.body.Profile.email+"',user.password='"+req.body.Profile.password+"'WHERE student.uid = user.uid AND user.token=('"+req.body.token+"')",function(err,result){
+            if(err) 
+                {
+                    res.send({errorCode:1,message:"Database Error!",status:"nodata"});
+                }
+            else
+                {
+                    res.send({errorCode:0,message:"Updated successfully",status:"successfully",data:result});
+                }
+        });
+    }
+    else
+    {
+        res.send({errorCode:2,message:"Missing fields",status:"error"});
+    }
+});        
  
 module.exports = router
