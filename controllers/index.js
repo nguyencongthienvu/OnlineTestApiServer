@@ -31,5 +31,7 @@ var search = require('./search');
 router.use('/search',search);
 var print = require('./print');
 router.use('/print', print);
+var admin = require('./admin');
+router.use('/admin', admin);
 
 module.exports = router
