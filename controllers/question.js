@@ -79,6 +79,42 @@ router.post('/totalmark',function(req,res){
     
 })
 router.post('/findall',function(req,res){
+    if(req.body.testid && req.body.token){
+        question.find('all',{where:"testid="+req.body.testid}, function(err, result){
+            if(err){
+                res.send({errorCode:1,message:"Database Error",status:"error"});
+            }
+            else{           
+                question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE user.token =('"+req.body.token+"') and testid =('"+req.body.testid+"')  ORDER BY qnid ",function(err,dataAnswer){
+                    if(err){
+                        res.send({errorCode:1,message:"Database Error",status:"error"});
+                    }
+                    else if(dataAnswer.length==0){
+                        question.query("SELECT qnid FROM question where testid =('"+req.body.testid+"')",function(err,array){
+                            for (var i = 0; i < array.length; i++) {
+                                question.query("Insert into studentquestionreport(testid, qnid, uid, answered) value('1', "+array[i].qnid+", '1', 'unanswered')",function(err,array){
+                                    if (err){
+                                        res.send({errorCode:1,message:"Database Error",status:"error"});
+                                    }
+                                });
+                            }
+                            res.send({errorCode:0,message:"successfully",status:"successfully",data:result});
+                        });
+                    } else {
+                         res.send({errorCode:0,message:"successfully",status:"successfully",data:result});
+                    }
+                });
+            }
+        });
+    }
+    else
+    {
+        res.send({errorCode:2,message:"Missing fields",status:"error"});
+    }
+    
+})
+
+router.post('/findalladmin',function(req,res){
     if(req.body.testid){
         question.find('all',{where:"testid="+req.body.testid}, function(err, result){
             if(err){
@@ -95,6 +131,7 @@ router.post('/findall',function(req,res){
     }
     
 })
+
 router.delete('/:rowId(\\d+)',function(req,res){
     if(req.params.rowId){
         question.find('count',{where:"qnid="+req.params.rowId}, function(err, result){
@@ -128,6 +165,34 @@ router.post('/takeInfo',function(req,res){
          else{
              res.send(result.data(rows));
          }
+     });
+    }  
+}); 
+
+router.post('/stdanswer',function(req,res){
+    if(req.body.token&&req.body.testid)
+    {
+        question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE token =('"+req.body.token+"') and testid =('"+req.body.testid+"')  ORDER BY qnid ",function(err,result){
+            if(err){
+                res.send({errorCode:1,message:"Database Error",status:"error"});
+            }
+            else{
+                res.send({errorCode:0,message:"successfully",status:"successfully",data:result});
+            }
+     });
+    }  
+}); 
+
+router.post('/updateAnswer',function(req,res){
+    if(req.body.Data.uid && req.body.Data.testid && req.body.Value && req.body.Data.qnid)
+    {       
+        question.query("UPDATE studentquestionreport SET stdanswer =('"+req.body.Value+"'), answered = 'answered' where qnid =('"+req.body.Data.qnid+"') AND testid =('"+req.body.Data.testid+"') and uid =('"+req.body.Data.uid+"')  ",function(err,result){
+            if(err){
+                res.send({errorCode:1,message:"Database Error",status:"error"});
+            }
+            else{
+                res.send({errorCode:0,message:"successfully",status:"successfully"});
+            }
      });
     }  
 }); 
