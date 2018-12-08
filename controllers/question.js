@@ -79,20 +79,20 @@ router.post('/totalmark',function(req,res){
     
 })
 router.post('/findall',function(req,res){
-    if(req.body.testid && req.body.token){
+    if(req.body.testid && req.body.token && req.body.uid){
         question.find('all',{where:"testid="+req.body.testid}, function(err, result){
             if(err){
                 res.send({errorCode:1,message:"Database Error",status:"error"});
             }
             else{           
-                question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE user.token =('"+req.body.token+"') and testid =('"+req.body.testid+"')  ORDER BY qnid ",function(err,dataAnswer){
+                question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE user.token =('"+req.body.token+"') and testid =('"+req.body.testid+"') and user.uid =('"+ req.body.uid+"') and user.uid = studentquestionreport.uid ORDER BY qnid ",function(err,dataAnswer){
                     if(err){
                         res.send({errorCode:1,message:"Database Error",status:"error"});
                     }
                     else if(dataAnswer.length==0){
                         question.query("SELECT qnid FROM question where testid =('"+req.body.testid+"')",function(err,array){
                             for (var i = 0; i < array.length; i++) {
-                                question.query("Insert into studentquestionreport(testid, qnid, uid, answered) value('1', "+array[i].qnid+", '1', 'unanswered')",function(err,array){
+                                question.query("Insert into studentquestionreport(testid, qnid, uid, answered) value('"+req.body.testid+"', "+array[i].qnid+", '"+ req.body.uid+"', 'unanswered')",function(err,array){
                                     if (err){
                                         res.send({errorCode:1,message:"Database Error",status:"error"});
                                     }
@@ -170,9 +170,9 @@ router.post('/takeInfo',function(req,res){
 }); 
 
 router.post('/stdanswer',function(req,res){
-    if(req.body.token&&req.body.testid)
+    if(req.body.token&&req.body.testid&&req.body.uid)
     {
-        question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE token =('"+req.body.token+"') and testid =('"+req.body.testid+"')  ORDER BY qnid ",function(err,result){
+        question.query("SELECT studentquestionreport.* FROM studentquestionreport, user WHERE user.token =('"+req.body.token+"') and testid =('"+req.body.testid+"') and user.uid = ('"+req.body.uid+"') and user.uid = studentquestionreport.uid  ORDER BY qnid ",function(err,result){
             if(err){
                 res.send({errorCode:1,message:"Database Error",status:"error"});
             }
