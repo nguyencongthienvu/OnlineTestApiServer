@@ -160,18 +160,37 @@ router.post('/takeexam',function(req,res){
         }  
 }); 
 router.post('/result',function(req,res){
-    if(req.body.stdid&&req.body.cid&&req.body.uid&&req.body.testid&&req.body.marks&&req.body.testdate)
-    {
+    if(req.body.Course.stdid&&req.body.Course.cid&&req.body.Course.uid&&req.body.Course.testid&&req.body.Course.testdate)
+    {   var marksum = 0;
+        var number = 0;
+        for(var i = 0, j =0;i<req.body.data.length&& j<req.body.answer.length;i++,j++)
+      { 
+        if(req.body.data[i].correctanswer == req.body.answer[j].stdanswer)
+        {
+          number++;
+          marksum += parseInt(req.body.data[i].mark); 
+        }
+        else
+        {
+          marksum +=0;
+        }
+      }
         var date = new Date();
         var fullDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
-        test.query("Insert into report(stdid,cid,uid,testid,marks,maxmarks,testdate) VALUES("+req.body.stdid+","+req.body.cid+","+req.body.uid+","+req.body.testid+","+req.body.marks+",10,'"+fullDate+"')", function(err, result) {
+        test.query("Insert into report(stdid,cid,uid,testid,marks,maxmarks,testdate) VALUES("+req.body.Course.stdid+","+req.body.Course.cid+","+req.body.Course.uid+","+req.body.Course.testid+","+marksum+",10,'"+fullDate+"')", function(err, result) {
             if(err) 
             {
                 res.send({errorCode:1,message:"Database Error!",status:"error"});
             }
             else
                 {
-                    res.send({errorCode:0,message:"Inserted successfully",status:"successfully"});
+                    res.send({errorCode:0,message:"Inserted successfully",status:"successfully", data:marksum});
+                    test.query("Insert into studenttestreport(testid,uid,correctlyanswerd,status) VALUES("+req.body.Course.testid+","+req.body.Course.uid+","+number+",'over')", function(err, result) {
+                        if(err) 
+                        {
+                            res.send({errorCode:1,message:"Database Error!",status:"error"});
+                        } 
+                    })
                 }     
         })
     }
@@ -180,5 +199,67 @@ router.post('/result',function(req,res){
         res.send({errorCode:2,message:"Missing fields",status:"error"});
     }
 })
+
+router.post('/getAnswer',function(req,res){
+    if(req.body.testid&&req.body.token)
+    {
+        test.query("SELECT studenttestreport.*, COUNT(question.qnid) as total ,report.marks, report.maxmarks FROM studenttestreport, question,user,report WHERE user.uid = studenttestreport.uid AND question.testid = studenttestreport.testid AND studenttestreport.testid =('"+req.body.testid+"')  AND user.token=('"+req.body.token+"') AND user.uid = report.uid",function(err,rows,fields){
+         if(err){
+             console.log(err)
+             res.send({errorCode:1,message:"Database Error!",status:"error"});
+         }
+         if(rows.length==0){
+             res.send({errorCode:1,message:"No data show!",status:"nodata",data:rows});
+         }
+         else{
+             res.send(result.data(rows));
+         }
+     });
+    } else {
+        res.send({errorCode:2,message:"No data show!",status:"nodata"});
+    }  
+}); 
+
+router.post('/getDetailAnswer',function(req,res){
+    if(req.body.testid&&req.body.token)
+    {
+        test.query("SELECT question.qnid, question.question, question.mark, question.correctanswer, studentquestionreport.stdanswer FROM studentquestionreport, question, user WHERE studentquestionreport.qnid = question.qnid AND studentquestionreport.uid = user.uid AND studentquestionreport.testid =('"+req.body.testid+"')  AND user.token=('"+req.body.token+"')",function(err,rows,fields){
+         if(err){
+             console.log(err)
+             res.send({errorCode:1,message:"Database Error!",status:"error"});
+         }
+         if(rows.length==0){
+             res.send({errorCode:1,message:"No data show!",status:"nodata",data:rows});
+         }
+         else{
+             res.send(result.data(rows));
+         }
+     });
+    } else {
+        res.send({errorCode:2,message:"No data show!",status:"nodata"});
+    }  
+}); 
+
+router.post('/chooseExam',function(req,res){
+    if(req.body.cid&&req.body.token)
+    {
+        test.query(" SELECT test.* FROM test, course WHERE course.cid = test.cid AND course.cid =('"+req.body.cid+"') AND EXISTS(SELECT report.testid FROM report, user WHERE report.testid = test.testid AND report.uid = user.uid AND user.token=('"+req.body.token+"'))",function(err,rows,fields){
+         if(err){
+             res.send({errorCode:1,message:"Database Error!",status:"error"});
+         }
+         if(rows.length==0){
+             res.send({errorCode:1,message:"No data show!",status:"nodata",data:rows});
+         }
+         else{
+             res.send(result.data(rows));
+         }
+     });
+    } else {
+        res.send({errorCode:2,message:"No data show!",status:"nodata"});
+    }  
+}); 
+
+
+
 module.exports = router
   
